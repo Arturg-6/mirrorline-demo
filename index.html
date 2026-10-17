@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mirrorline - Channel Sync Console</title>
+  <meta name="description" content="Two-way channel sync console demo: availability, rates and reservations mirrored from the BEDS24 hub to Airbnb, Expedia, Vrbo and Trip.com.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="grain"></div>
+
+  <header class="nav">
+    <a class="brand" href="#top">
+      <img src="assets/favicon.svg" alt="" width="28" height="28">
+      <span>Mirrorline</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#channels">Channels</a>
+      <a href="#mirror">Mirror</a>
+      <a href="#lab">Test lab</a>
+      <a href="#runbook">Runbook</a>
+    </nav>
+    <div class="nav-status"><i class="pulse"></i><span id="clock">--:--:--</span></div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-copy" data-parallax="0.15">
+        <p class="eyebrow">BEDS24 hub &middot; 4 channels &middot; two-way</p>
+        <h1>One calendar.<br><em>Every</em> channel.<br>Zero drift.</h1>
+        <p class="lede">BEDS24 stays the single source of truth. Rates and availability go out, bookings, changes and cancellations come back in. Mirrorline shows every hop so nothing is left to guesswork.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary mag" href="#lab">Run a test booking</a>
+          <a class="btn btn-ghost mag" href="#mirror">See the mirror</a>
+        </div>
+        <dl class="hero-stats">
+          <div><dt>Push latency</dt><dd><span data-count="1.8" data-dec="1">0</span>s</dd></div>
+          <div><dt>Calendar drift</dt><dd><span id="heroDrift">0</span> cells</dd></div>
+          <div><dt>Channels live</dt><dd><span data-count="4">0</span>/4</dd></div>
+        </dl>
+      </div>
+      <div class="hero-orb">
+        <canvas id="orb" aria-label="Animated sync map between BEDS24 and channels"></canvas>
+        <div class="orb-legend">
+          <span><i class="dot coral"></i>rates + availability out</span>
+          <span><i class="dot mint"></i>bookings in</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Airbnb API</span><b>/</b><span>Expedia EQC</span><b>/</b><span>Vrbo</span><b>/</b><span>Trip.com</span><b>/</b><span>Daily price rules</span><b>/</b><span>Min stay</span><b>/</b><span>Cancellations</span><b>/</b><span>Modifications</span><b>/</b>
+        <span>Airbnb API</span><b>/</b><span>Expedia EQC</span><b>/</b><span>Vrbo</span><b>/</b><span>Trip.com</span><b>/</b><span>Daily price rules</span><b>/</b><span>Min stay</span><b>/</b><span>Cancellations</span><b>/</b><span>Modifications</span><b>/</b>
+      </div>
+    </div>
+
+    <!-- CHANNELS -->
+    <section class="section" id="channels">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">01 &middot; Channel matrix</p>
+        <h2>API first. iCal only where it must be.</h2>
+        <p>Each connection is mapped room by room to a BEDS24 property, with its own rate plan and push rules. Hover a card to inspect it.</p>
+      </div>
+      <div class="cards" id="channelCards"></div>
+    </section>
+
+    <!-- MIRROR -->
+    <section class="section" id="mirror">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">02 &middot; Live mirror</p>
+        <h2>Change it once. Watch it land everywhere.</h2>
+        <p>The top row is BEDS24. Click any night to change the price or close it, then watch each channel catch up. The drift meter counts nights that do not match the hub yet.</p>
+      </div>
+
+      <div class="mirror" data-reveal>
+        <div class="mirror-top">
+          <div class="prop-tabs" id="propTabs"></div>
+          <div class="drift">
+            <div class="drift-ring"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16"/><circle id="driftArc" cx="20" cy="20" r="16"/></svg><b id="driftNum">0</b></div>
+            <div><small>Drift meter</small><strong id="driftLabel">In sync</strong></div>
+          </div>
+        </div>
+        <div class="grid-wrap">
+          <div class="grid" id="mirrorGrid"></div>
+        </div>
+        <p class="hint">Tip: booked nights come from the test lab below. Closed nights show as hatched.</p>
+      </div>
+    </section>
+
+    <!-- LAB -->
+    <section class="section" id="lab">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">03 &middot; Test booking lab</p>
+        <h2>Book. Modify. Cancel. Check every hop.</h2>
+        <p>The same three checks I would run on the live account, for every channel, before calling the job done. Try a double booking too.</p>
+      </div>
+
+      <div class="lab" data-reveal>
+        <form class="lab-form" id="labForm" autocomplete="off">
+          <label class="field">
+            <span>Property</span>
+            <div class="select" id="propSelect" data-value=""></div>
+          </label>
+          <label class="field">
+            <span>Arrives from</span>
+            <div class="select" id="chanSelect" data-value=""></div>
+          </label>
+          <label class="field">
+            <span>Stay</span>
+            <button type="button" class="date-btn" id="dateBtn"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span id="dateLabel">Pick dates</span></button>
+          </label>
+          <label class="field">
+            <span>Guests</span>
+            <div class="stepper">
+              <button type="button" data-step="-1" aria-label="Fewer guests">-</button>
+              <output id="guests">2</output>
+              <button type="button" data-step="1" aria-label="More guests">+</button>
+            </div>
+          </label>
+          <div class="lab-actions">
+            <button type="submit" class="btn btn-primary mag">Send test booking</button>
+            <button type="button" class="btn btn-ghost mag" id="modBtn">Modify last (+1 night)</button>
+            <button type="button" class="btn btn-ghost danger mag" id="cancelBtn">Cancel last</button>
+          </div>
+        </form>
+
+        <div class="lab-out">
+          <ol class="timeline" id="timeline">
+            <li class="idle">Waiting for a test booking...</li>
+          </ol>
+          <div class="console">
+            <div class="console-bar"><i></i><i></i><i></i><span>sync.log</span><button type="button" id="clearLog">clear</button></div>
+            <pre id="log"></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="bookings" data-reveal>
+        <h3>Reservations in BEDS24 <small id="bkCount">0</small></h3>
+        <div class="bk-list" id="bkList"><p class="empty">No test bookings yet.</p></div>
+      </div>
+    </section>
+
+    <!-- RUNBOOK -->
+    <section class="section" id="runbook">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">04 &middot; Runbook</p>
+        <h2>Fix it yourself in five minutes.</h2>
+        <p>Short, labelled notes for the things that usually go wrong, plus how to add a new listing without breaking the mapping.</p>
+      </div>
+      <div class="acc" id="acc" data-reveal></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Mirrorline &middot; demo console with simulated data. No live accounts are connected.</p>
+    <a href="#top" class="mag">Back to top</a>
+  </footer>
+
+  <!-- floating layers -->
+  <div class="popover" id="cellPop" role="dialog" aria-modal="false" hidden>
+    <header><strong id="popTitle">Night</strong><button type="button" class="x" data-close aria-label="Close">&times;</button></header>
+    <div class="seg" id="popSeg">
+      <button type="button" data-v="open" class="on">Open</button>
+      <button type="button" data-v="closed">Closed</button>
+    </div>
+    <div class="price-row">
+      <button type="button" data-p="-5">-5</button>
+      <div class="price-in"><span>EUR</span><input id="popPrice" type="text" inputmode="numeric"></div>
+      <button type="button" data-p="5">+5</button>
+    </div>
+    <button type="button" class="btn btn-primary full" id="popApply">Push to all channels</button>
+  </div>
+
+  <div class="popover picker" id="datePop" hidden>
+    <header>
+      <button type="button" class="nav-m" data-m="-1" aria-label="Previous month">&lsaquo;</button>
+      <strong id="pkMonth">Month</strong>
+      <button type="button" class="nav-m" data-m="1" aria-label="Next month">&rsaquo;</button>
+    </header>
+    <div class="pk-week"><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span></div>
+    <div class="pk-days" id="pkDays"></div>
+    <footer><span id="pkInfo">Choose arrival</span><button type="button" class="btn btn-primary sm" id="pkDone">Done</button></footer>
+  </div>
+
+  <div class="modal" id="modal" hidden>
+    <div class="modal-card">
+      <div class="modal-glow"></div>
+      <h3 id="modalTitle">Title</h3>
+      <p id="modalText">Text</p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-close>Keep it</button>
+        <button type="button" class="btn btn-primary danger-fill" id="modalOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/orb.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
