@@ -189,7 +189,7 @@
       pop.hidden = true;
       log("t", "hub update " + propName(activeProp) + " " + UI.fmt(UI.addDays(today, editing)) + " -> " + (state === "open" ? price + " EUR" : "closed"));
       propagate(activeProp, [editing]);
-      UI.toast("Saved in BEDS24. Pushing to 4 channels.");
+      UI.toast("Saved in BEDS24. Pushing to " + CHANNELS.length + " channels.");
     });
     UI.dismissable(pop, function (t) { return !!t.closest(".cell.hub"); });
 
@@ -254,7 +254,7 @@
     };
     bookings.unshift(bk);
     steps.push(["ok", "Nights blocked in hub", UI.nights(bk.from, bk.to) + " night(s)"]);
-    steps.push(["ok", "Availability pushed to the other 3 channels", "auto"]);
+    steps.push(["ok", "Availability pushed to the other " + (CHANNELS.length - 1) + " channels", "auto"]);
     steps.push(["ok", "Check passed: drift returns to 0", "verified"]);
     play(steps);
 

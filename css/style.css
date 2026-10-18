@@ -147,7 +147,7 @@ h1 em {
 [data-reveal].in { opacity: 1; transform: none; }
 
 /* ---------- channel cards ---------- */
-.cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; perspective: 1200px; }
+.cards { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; perspective: 1200px; }
 .card {
   position: relative; padding: 22px; border-radius: var(--radius); min-height: 300px;
   background: linear-gradient(160deg, #1b1e25, #121419); border: 1px solid var(--line);
@@ -376,7 +376,7 @@ h1 em {
 @media (max-width: 1000px) {
   .hero { grid-template-columns: 1fr; padding-top: 110px; }
   .hero-orb { max-width: 520px; margin: 0 auto; }
-  .cards { grid-template-columns: repeat(2, 1fr); }
+  .cards { grid-template-columns: repeat(3, 1fr); }
   .lab { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {

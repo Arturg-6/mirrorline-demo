@@ -4,22 +4,27 @@ var CHANNELS = [
   {
     id: "abnb", name: "Airbnb", letter: "A", color: "#ff5a5f", mode: "API", delay: 600,
     sub: "Connected via BEDS24 Airbnb API",
-    rows: [["Listings mapped", "3 / 3"], ["Rates", "Daily, from hub"], ["Min stay", "Synced"], ["Booking import", "Instant"]]
+    rows: [["Listing mapped", "1 / 1"], ["Rates", "Daily, from hub"], ["Min stay", "Synced"], ["Booking import", "Instant"]]
   },
   {
-    id: "exp", name: "Expedia", letter: "E", color: "#ffd166", mode: "API", delay: 900,
+    id: "bdc", name: "Booking.com", letter: "B", color: "#4f8cff", mode: "API", delay: 800,
+    sub: "BEDS24 as connectivity provider",
+    rows: [["Room mapped", "1 / 1"], ["Rate plans", "Standard + NR"], ["Restrictions", "Min stay / CTA"], ["Booking import", "Instant"]]
+  },
+  {
+    id: "exp", name: "Expedia", letter: "E", color: "#ffd166", mode: "API", delay: 1000,
     sub: "Expedia EQC through BEDS24",
-    rows: [["Room types", "3 / 3"], ["Rate plans", "Standard + NR"], ["Restrictions", "CTA / CTD"], ["Booking import", "Instant"]]
+    rows: [["Room type", "1 / 1"], ["Rate plans", "Standard + NR"], ["Restrictions", "CTA / CTD"], ["Booking import", "Instant"]]
   },
   {
-    id: "vrbo", name: "Vrbo", letter: "V", color: "#5aa9ff", mode: "API", delay: 1300,
+    id: "vrbo", name: "Vrbo", letter: "V", color: "#7cc4ff", mode: "API", delay: 1300,
     sub: "Vrbo channel inside BEDS24",
-    rows: [["Units mapped", "3 / 3"], ["Rates", "Daily, from hub"], ["Fees", "Cleaning mapped"], ["Booking import", "Instant"]]
+    rows: [["Unit mapped", "1 / 1"], ["Rates", "Daily, from hub"], ["Fees", "Cleaning mapped"], ["Booking import", "Instant"]]
   },
   {
-    id: "trip", name: "Trip.com", letter: "T", color: "#9b8cff", mode: "API", delay: 1700,
-    sub: "Trip.com connection via BEDS24",
-    rows: [["Rooms mapped", "3 / 3"], ["Rates", "Daily, from hub"], ["Currency", "EUR"], ["Booking import", "~1 min"]]
+    id: "goog", name: "Google", letter: "G", color: "#9b8cff", mode: "API", delay: 1600,
+    sub: "Google vacation rentals via BEDS24",
+    rows: [["Listing", "1 / 1"], ["Prices", "Daily, from hub"], ["Free cancel", "Shown"], ["Booking", "Direct link"]]
   }
 ];
 
